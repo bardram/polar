@@ -1,6 +1,6 @@
-/// Polar device info
+/// Polar device info.
 class PolarDeviceInfo {
-  /// polar device id or UUID for 3rd party sensors
+  /// Polar device id or UUID for 3rd party sensors
   final String deviceId;
 
   /// The mac address of the polar device.
@@ -11,10 +11,10 @@ class PolarDeviceInfo {
   /// RSSI (Received Signal Strength Indicator) value from advertisement
   final int rssi;
 
-  /// local name from advertisement
+  /// Local name from advertisement
   final String name;
 
-  /// true adv type is connectable
+  /// True if adv type is connectable.
   final bool isConnectable;
 
   /// Create a [PolarDeviceInfo] from json

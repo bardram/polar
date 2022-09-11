@@ -1,40 +1,66 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:polar/polar.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const PolarExampleApp());
 
-/// Example app
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+/// Polar Example App.
+///
+/// Illustrates how to connect and dissconnect to a Polar device, and how to
+/// listen to device and heart rate events.
+class PolarExampleApp extends StatefulWidget {
+  const PolarExampleApp({Key? key}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<PolarExampleApp> createState() => _PolarExampleAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  static const identifier = '1C709B20';
+class _PolarExampleAppState extends State<PolarExampleApp> {
+  /// The unique identifier of the Polar device. Normally printed on the edge
+  /// of the physical device.
+  /// Put your own device id here for testing.
+  static const identifier = 'B5FC172F';
 
   final polar = Polar();
-  final logs = ['Service started'];
+  final logs = [];
+  List<DeviceStreamingFeature> features = [];
+  StreamSubscription<PolarHeartRateEvent>? hrSubscription;
+  StreamSubscription<PolarEcgData>? ecgSubscription;
 
   @override
   void initState() {
     super.initState();
 
-    polar.heartRateStream.listen((e) => log('Heart rate: ${e.data.hr}'));
     polar.batteryLevelStream.listen((e) => log('Battery: ${e.level}'));
-    polar.streamingFeaturesReadyStream.listen((e) {
-      if (e.features.contains(DeviceStreamingFeature.ecg)) {
-        polar
-            .startEcgStreaming(e.identifier)
-            .listen((e) => log('ECG data: ${e.samples}'));
-      }
-    });
     polar.deviceConnectingStream.listen((_) => log('Device connecting'));
-    polar.deviceConnectedStream.listen((_) => log('Device connected'));
+    polar.deviceConnectedStream.listen((_) => log(
+        'Device connected - Press the Play button to listen to HR events.'));
     polar.deviceDisconnectedStream.listen((_) => log('Device disconnected'));
+
+    polar.streamingFeaturesReadyStream.listen((e) {
+      features = e.features;
+      log('Device features: $features');
+    });
+    log('Ready - Press the Bluetooth button to connect to the device with identifier: $identifier');
+  }
+
+  void resume() {
+    log('Listening to HR');
+    hrSubscription =
+        polar.heartRateStream.listen((e) => log('Heart rate: ${e.data.hr}'));
+
+    if (features.contains(DeviceStreamingFeature.ecg)) {
+      log('Listening to ECG');
+      ecgSubscription = polar
+          .startEcgStreaming(identifier)
+          .listen((e) => log('ECG data: ${e.samples}'));
+    }
+  }
+
+  void pause() {
+    hrSubscription?.cancel();
+    ecgSubscription?.cancel();
   }
 
   @override
@@ -42,20 +68,34 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Polar example app'),
+          title: const Text('Polar Demo'),
           actions: [
             IconButton(
-              icon: const Icon(Icons.stop),
+              icon: const Icon(Icons.bluetooth),
               onPressed: () {
-                log('Disconnecting from device: $identifier');
-                polar.disconnectFromDevice(identifier);
+                log('Connecting to device: $identifier');
+                polar.connectToDevice(identifier);
               },
             ),
             IconButton(
               icon: const Icon(Icons.play_arrow),
               onPressed: () {
-                log('Connecting to device: $identifier');
-                polar.connectToDevice(identifier);
+                log('Listening to device: $identifier');
+                resume();
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.pause),
+              onPressed: () {
+                log('Pausing listening to device: $identifier');
+                pause();
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.stop),
+              onPressed: () {
+                log('Disconnecting from device: $identifier');
+                polar.disconnectFromDevice(identifier);
               },
             ),
           ],

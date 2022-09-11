@@ -1,48 +1,50 @@
 import 'package:polar/src/model/device_streaming_feature.dart';
 import 'package:polar/src/model/polar_hr_data.dart';
 
-/// feature ready callback
+/// Feature available event.
 class PolarStreamingFeaturesReadyEvent {
-  /// Polar device id
+  /// Polar device identifier.
   final String identifier;
 
-  /// List of [DeviceStreamingFeature]s that are ready
+  /// List of available [DeviceStreamingFeature]s.
   final List<DeviceStreamingFeature> features;
 
-  /// Construct a [PolarStreamingFeaturesReadyEvent] from an [identifier] and [features]
+  /// Construct a [PolarStreamingFeaturesReadyEvent] from an [identifier]
+  /// and [features]
   PolarStreamingFeaturesReadyEvent(this.identifier, this.features);
 }
 
 /// Received DIS info.
 class PolarDisInformationEvent {
-  /// Polar device id
+  /// Polar device identifier.
   final String identifier;
 
   /// UUID of the sensor
   final String uuid;
 
-  /// firmware version in format major.minor.patch
+  /// Firmware version in format major.minor.patch
   final String info;
 
-  /// Construct a [PolarDisInformationEvent] from an [identifier], [uuid], and [info]
+  /// Construct a [PolarDisInformationEvent] from an [identifier], [uuid],
+  /// and [info]
   PolarDisInformationEvent(this.identifier, this.uuid, this.info);
 }
 
 /// Battery level received from device.
 class PolarBatteryLevelEvent {
-  /// Polar device id
+  /// Polar device identifier.
   final String identifier;
 
-  /// battery level in precentage 0-100%
+  /// Battery level in precentage 0-100%
   final int level;
 
-  /// Construct a [PolarBatteryLevelEvent] from an [identifier] and [level]
+  /// Construct a [PolarBatteryLevelEvent] from an [identifier] and battery [level].
   PolarBatteryLevelEvent(this.identifier, this.level);
 }
 
 /// HR notification received.
 class PolarHeartRateEvent {
-  /// Polar device id
+  /// Polar device identifier.
   final String identifier;
 
   /// The [PolarHrData] received from the sensor

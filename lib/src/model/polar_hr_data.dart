@@ -1,19 +1,20 @@
-/// Polar hr data
+/// Polar Heart Rate (HR) data.
 class PolarHrData {
-  /// hr in BPM
+  /// HR in BPM.
   final int hr;
 
-  /// rrs RR interval in 1/1024.
-  /// R is a the top highest peak in the QRS complex of the ECG wave and RR is the interval between successive Rs.
+  /// RR interval in 1/1024.
+  /// R is a the top highest peak in the QRS complex of the ECG wave and RR
+  /// is the interval between successive Rs.
   final List<int> rrs;
 
-  /// rrs RR interval in ms.
+  /// RR interval in ms.
   final List<int> rrsMs;
 
-  /// contact status between the device and the users skin
+  /// Contact status between the device and the user's skin.
   final bool contactStatus;
 
-  /// contactSupported if contact is supported
+  /// Is contact dection supported?
   final bool contactStatusSupported;
 
   /// Create a [PolarHrData] from json
